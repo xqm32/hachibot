@@ -3,7 +3,7 @@ import { Hono } from "hono";
 import { z } from "zod/v4";
 import { commands } from "./command";
 
-const app = new Hono<{ Bindings: CloudflareBindings }>();
+const app = new Hono();
 
 app.post("/", zValidator("form", z.object({ msg: z.string() })), async (c) => {
   const { msg } = c.req.valid("form");
