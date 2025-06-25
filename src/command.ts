@@ -11,6 +11,7 @@ export const commands: Command[] = [
   { name: "r", execute: room },
   { name: "谁在打雨酱牌", execute: room },
   { name: "guyu", execute: guyu },
+  { name: "gy", execute: guyu },
 ];
 
 commands.sort((a, b) => a.name.localeCompare(b.name)).reverse();
