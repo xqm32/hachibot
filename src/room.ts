@@ -1,7 +1,7 @@
 import { z } from "zod/v4";
 
 const Room = z.object({
-  id: z.string(),
+  id: z.number(),
   players: z.array(
     z.object({
       name: z.string(),
