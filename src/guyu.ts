@@ -1,8 +1,7 @@
 import { Octokit } from "octokit";
 
-const octokit = new Octokit();
-
 export default async () => {
+  const octokit = new Octokit();
   const pullRequest = (
     await octokit.request("GET /repos/{owner}/{repo}/pulls", {
       owner: "genius-invokation",
