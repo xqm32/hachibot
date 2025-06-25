@@ -20,13 +20,12 @@ export default async () =>
       ].map(async (url) => await (await fetch(url)).json())
     )
   )
-    .map((result) =>
-      Rooms.parse(result).map(
-        (room) =>
-          `${room.id} 👉 ${room.players.map((p) => p.name).join(" 🆚 ")}`
+    .flatMap((rooms, i) =>
+      [i === 0 ? "=== Main Rooms ===" : "=== Beta Rooms ==="].concat(
+        Rooms.parse(rooms).map(
+          (room) =>
+            `${room.id} 👉 ${room.players.map((p) => p.name).join(" 🆚 ")}`
+        )
       )
     )
-    .with(0, ["=== Main Rooms ==="])
-    .with(2, ["=== Beta Rooms ==="])
-    .flat()
     .join("\n");
