@@ -10,10 +10,21 @@ app.post("/", zValidator("form", z.object({ msg: z.string() })), async (c) => {
   const result = commands.find((c) => msg.startsWith(c.name))?.execute(msg);
   if (result === undefined) {
     return c.text("Command not found", 404);
-  } else if (result instanceof Promise) {
-    return c.json(await result);
-  } else {
-    return c.text(result);
+  }
+
+  try {
+    if (result instanceof Promise) {
+      return c.text(await result);
+    } else {
+      return c.text(result);
+    }
+  } catch (error) {
+    return c.text(
+      `Error executing command: ${
+        error instanceof Error ? error.message : String(error)
+      }`,
+      500
+    );
   }
 });
 
