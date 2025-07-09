@@ -1,3 +1,4 @@
+import decks from "./decks";
 import guyu from "./guyu";
 import room from "./room";
 
@@ -12,6 +13,7 @@ export const commands: Command[] = [
   { name: "谁在打雨酱牌", execute: room },
   { name: "guyu", execute: guyu },
   { name: "gy", execute: guyu },
+  { name: "decks", execute: decks },
 ];
 
 commands.sort((a, b) => a.name.localeCompare(b.name)).reverse();
