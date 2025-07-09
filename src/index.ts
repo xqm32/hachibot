@@ -13,11 +13,7 @@ app.post("/", zValidator("form", z.object({ msg: z.string() })), async (c) => {
   }
 
   try {
-    if (result instanceof Promise) {
-      return c.text(await result);
-    } else {
-      return c.text(result);
-    }
+    return c.text(await result);
   } catch (error) {
     return c.text(
       `Error executing command: ${
