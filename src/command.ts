@@ -3,7 +3,7 @@ import decks from "./decks";
 import guyu from "./guyu";
 import { llm, llmlist } from "./llm";
 import room from "./room";
-import lol from "./lol";
+import { lol, lolv2 } from "./lol";
 
 export interface Command {
   name: string;
@@ -31,6 +31,7 @@ export const commands: Command[] = [
   { name: "llm", execute: llm },
   { name: "llmlist", execute: llmlist },
   { name: "lol", execute: lol },
+  { name: "lolv2", execute: lolv2 },
   { name: "", execute: llm },
 ];
 

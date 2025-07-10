@@ -1,7 +1,7 @@
 import dayjs from "dayjs";
 import { Command } from "./command";
 
-const lol: Command["execute"] = async ({ msg }) => {
+export const lol: Command["execute"] = async ({ msg }) => {
   let [stime, etime] = msg.split(" ");
   if (!stime) {
     stime = dayjs().format("YYYY-MM-DD");
@@ -40,4 +40,21 @@ const lol: Command["execute"] = async ({ msg }) => {
     .join("\n");
 };
 
-export default lol;
+export const lolv2: Command["execute"] = async () => {
+  const games = Object.entries(
+    JSON.parse(
+      (
+        await (
+          await fetch(
+            "https://lpl.qq.com/web201612/data/LOL_MATCH2_GAME_LIST_BRIEF.js"
+          )
+        ).text()
+      ).slice("var GameList=".length, -1)
+    ).msg.sGameList
+  ).flatMap((i) => i[1]) as any[];
+  games.sort((a, b) => Number(b.GameId) - Number(a.GameId));
+  return games
+    .slice(0, 10)
+    .map((game) => game.GameName)
+    .join("\n");
+};

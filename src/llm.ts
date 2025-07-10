@@ -3,7 +3,7 @@ import { generateText, stepCountIs, tool } from "ai";
 import dayjs from "dayjs";
 import { z } from "zod/v4";
 import { Command } from "./command";
-import lol from "./lol";
+import { lol } from "./lol";
 
 export const llm: Command["execute"] = async ({ msg, ref }, c) => {
   let [model, prompt] = ["openai/gpt-4.1", msg];
