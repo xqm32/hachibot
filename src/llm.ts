@@ -3,14 +3,9 @@ import { Command } from "./command";
 import { createGateway } from "@ai-sdk/gateway";
 
 export const llm: Command["execute"] = async ({ msg, ref }, c) => {
-  let model: string;
-  let prompt: string;
-
-  const elements = msg.split(" ", 2);
-  if (elements.length < 2) {
-    [model, prompt] = ["xai/grok-3", msg];
-  } else {
-    [model, prompt] = elements;
+  let [model, prompt] = ["xai/grok-3", msg];
+  if (msg.startsWith("/")) {
+    [model, prompt] = msg.slice(1).split(" ", 2);
   }
 
   const gateway = createGateway({ apiKey: c.env.AI_GATEWAY_API_KEY });
