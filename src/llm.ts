@@ -3,7 +3,7 @@ import { generateText, stepCountIs, tool } from "ai";
 import dayjs from "dayjs";
 import { z } from "zod/v4";
 import { Command } from "./command";
-import { lol } from "./lol";
+import { lol, lolv2 } from "./lol";
 
 export const llm: Command["execute"] = async ({ msg, ref }, c) => {
   let [model, prompt] = ["openai/gpt-4.1", msg];
@@ -21,24 +21,12 @@ export const llm: Command["execute"] = async ({ msg, ref }, c) => {
         execute: () => dayjs().format(),
       }),
       lol: tool({
-        description: "Get League of Legends matches",
-        inputSchema: z.object({
-          stime: z.iso
-            .date()
-            .optional()
-            .describe("Start time in YYYY-MM-DD format"),
-          etime: z.iso
-            .date()
-            .optional()
-            .describe("End time in YYYY-MM-DD format"),
-        }),
-        execute: async ({ stime, etime }) =>
-          await lol({ msg: `${stime} ${etime}`, ref }, c),
+        description: "Get recent League of Legends matches",
+        inputSchema: z.object().describe("No input required"),
+        execute: () => lolv2({ msg, ref }, c),
       }),
     },
     stopWhen: stepCountIs(5),
-    system:
-      "You are an assistant. Please do not reply with more than 500 words in your response.",
     prompt: [ref, prompt].filter(Boolean).join("\n"),
   });
   return text;
