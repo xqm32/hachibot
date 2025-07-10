@@ -2,7 +2,7 @@ import { generateText } from "ai";
 import { Command } from "./command";
 import { createGateway } from "@ai-sdk/gateway";
 
-const llm: Command["execute"] = async ({ msg, ref }, c) => {
+export const llm: Command["execute"] = async ({ msg, ref }, c) => {
   let model: string;
   let prompt: string;
 
@@ -21,4 +21,11 @@ const llm: Command["execute"] = async ({ msg, ref }, c) => {
   return text;
 };
 
-export default llm;
+export const llmlist: Command["execute"] = async (_, c) =>
+  (
+    await createGateway({
+      apiKey: c.env.AI_GATEWAY_API_KEY,
+    }).getAvailableModels()
+  ).models
+    .map((model) => model.id)
+    .join("\n");

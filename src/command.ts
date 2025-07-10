@@ -1,8 +1,8 @@
 import { Context } from "hono";
 import decks from "./decks";
 import guyu from "./guyu";
+import { llm, llmlist } from "./llm";
 import room from "./room";
-import llm from "./llm";
 
 export interface Command {
   name: string;
@@ -27,6 +27,7 @@ export const commands: Command[] = [
   { name: "decks", execute: decks },
   { name: "echo", execute: ({ msg, ref }) => JSON.stringify({ msg, ref }) },
   { name: "llm", execute: llm },
+  { name: "llmlist", execute: llmlist },
 ];
 
 commands.sort((a, b) => a.name.localeCompare(b.name)).reverse();
