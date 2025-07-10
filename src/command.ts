@@ -20,6 +20,7 @@ export interface Command {
 
 export const commands: Command[] = [
   { name: "commands", execute: () => commands.map((c) => c.name).join(", ") },
+  { name: "help", execute: () => commands.map((c) => c.name).join(", ") },
   { name: "r", execute: room },
   { name: "谁在打雨酱牌", execute: room },
   { name: "guyu", execute: guyu },
