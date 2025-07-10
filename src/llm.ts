@@ -1,9 +1,14 @@
 import { createGateway } from "@ai-sdk/gateway";
 import { generateText, stepCountIs, tool } from "ai";
 import dayjs from "dayjs";
+import timezone from "dayjs/plugin/timezone";
+import utc from "dayjs/plugin/utc";
 import { z } from "zod/v4";
 import { Command } from "./command";
-import { lol, lolv2 } from "./lol";
+import { lolv2 } from "./lol";
+
+dayjs.extend(utc);
+dayjs.extend(timezone);
 
 export const llm: Command["execute"] = async ({ msg, ref }, c) => {
   let [model, prompt] = ["openai/gpt-4.1", msg];
@@ -18,7 +23,7 @@ export const llm: Command["execute"] = async ({ msg, ref }, c) => {
       today: tool({
         description: "Get today's date and time",
         inputSchema: z.object().describe("No input required"),
-        execute: () => dayjs().format(),
+        execute: () => dayjs().tz("Asia/Shanghai").format(),
       }),
       lol: tool({
         description: "Get recent League of Legends matches",
