@@ -3,6 +3,7 @@ import decks from "./decks";
 import guyu from "./guyu";
 import { llm, llmlist } from "./llm";
 import room from "./room";
+import lol from "./lol";
 
 export interface Command {
   name: string;
@@ -29,6 +30,7 @@ export const commands: Command[] = [
   { name: "echo", execute: ({ msg, ref }) => JSON.stringify({ msg, ref }) },
   { name: "llm", execute: llm },
   { name: "llmlist", execute: llmlist },
+  { name: "lol", execute: lol },
 ];
 
 commands.sort((a, b) => a.name.localeCompare(b.name)).reverse();
