@@ -37,6 +37,8 @@ export const llm: Command["execute"] = async ({ msg, ref }, c) => {
       }),
     },
     stopWhen: stepCountIs(5),
+    system:
+      "You are an assistant. Please do not reply with more than 500 words in your response.",
     prompt: [ref, prompt].filter(Boolean).join("\n"),
   });
   return text;
