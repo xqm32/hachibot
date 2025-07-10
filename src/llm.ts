@@ -22,6 +22,7 @@ export const llm: Command["execute"] = async ({ msg, ref }, c) => {
 };
 
 export const llmlist: Command["execute"] = async (_, c) =>
+  // Undocumented API, but works for now
   (
     await createGateway({
       apiKey: c.env.AI_GATEWAY_API_KEY,
