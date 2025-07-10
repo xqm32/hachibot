@@ -10,15 +10,18 @@ app.post(
   zValidator("form", z.object({ msg: z.string(), ref: z.string().optional() })),
   async (c) => {
     const { msg, ref } = c.req.valid("form");
-    const result = commands
-      .find((cmd) => msg.startsWith(cmd.name))
-      ?.execute({ msg, ref });
-    if (result === undefined) {
+    const command = commands.find((command) => msg.startsWith(command.name));
+    if (!command) {
       return c.text("Command not found", 404);
     }
 
     try {
-      return c.text(await result);
+      return c.text(
+        await command.execute(
+          { msg: msg.slice(command.name.length).trim(), ref: ref?.trim() },
+          c
+        )
+      );
     } catch (error) {
       return c.text(
         `Error executing command: ${
