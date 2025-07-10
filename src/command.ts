@@ -1,16 +1,20 @@
+import { Context } from "hono";
 import decks from "./decks";
 import guyu from "./guyu";
 import room from "./room";
 
 interface Command {
   name: string;
-  execute: ({
-    msg,
-    ref,
-  }: {
-    msg: string;
-    ref?: string;
-  }) => string | Promise<string>;
+  execute: (
+    {
+      msg,
+      ref,
+    }: {
+      msg: string;
+      ref?: string;
+    },
+    c: Context<{ Bindings: CloudflareBindings }>
+  ) => string | Promise<string>;
 }
 
 export const commands: Command[] = [
