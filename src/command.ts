@@ -4,7 +4,13 @@ import room from "./room";
 
 interface Command {
   name: string;
-  execute: (msg: string) => string | Promise<string>;
+  execute: ({
+    msg,
+    ref,
+  }: {
+    msg: string;
+    ref?: string;
+  }) => string | Promise<string>;
 }
 
 export const commands: Command[] = [
@@ -14,6 +20,7 @@ export const commands: Command[] = [
   { name: "guyu", execute: guyu },
   { name: "gy", execute: guyu },
   { name: "decks", execute: decks },
+  { name: "echo", execute: ({ msg, ref }) => JSON.stringify({ msg, ref }) },
 ];
 
 commands.sort((a, b) => a.name.localeCompare(b.name)).reverse();
