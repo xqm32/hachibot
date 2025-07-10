@@ -52,9 +52,18 @@ export const lolv2: Command["execute"] = async () => {
       ).slice("var GameList=".length, -1)
     ).msg.sGameList
   ).flatMap((i) => i[1]) as any[];
-  games.sort((a, b) => Number(b.GameId) - Number(a.GameId));
-  return games
-    .slice(0, 10)
-    .map((game) => game.GameName)
-    .join("\n");
+  const [latest] = games.sort((a, b) => Number(b.GameId) - Number(a.GameId));
+  const data = (await (
+    await fetch(
+      `https://lpl.qq.com/web201612/data/LOL_MATCH2_MATCH_HOMEPAGE_BMATCH_LIST_${latest.GameId}.js`
+    )
+  ).json()) as any;
+  const matches = data.msg as any[];
+  const match = matches.find((match) => match.MatchStatus == "1");
+  const [teamA, teamB] = match.bMatchName.split(" vs ");
+  return [
+    `${match.GameName} ${match.GameTypeName} ${match.GameProcName}`,
+    `${match.MatchDate}`,
+    `${teamA} ${match.ScoreA}:${match.ScoreB} ${teamB}`,
+  ].join("\n");
 };
