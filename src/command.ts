@@ -31,6 +31,7 @@ export const commands: Command[] = [
   { name: "llm", execute: llm },
   { name: "llmlist", execute: llmlist },
   { name: "lol", execute: lol },
+  { name: "", execute: llm },
 ];
 
 commands.sort((a, b) => a.name.localeCompare(b.name)).reverse();
