@@ -59,7 +59,7 @@ export const lolv2: Command["execute"] = async () => {
     )
   ).json()) as any;
   const matches = data.msg as any[];
-  const match = matches.find((match) => match.MatchStatus == "1");
+  const match = matches.find((match) => ["1", "2"].includes(match.MatchStatus));
   const [teamA, teamB] = match.bMatchName.split(" vs ");
   return [
     `${match.GameName} ${match.GameTypeName} ${match.GameProcName}`,
