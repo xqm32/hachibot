@@ -11,7 +11,7 @@ dayjs.extend(utc);
 dayjs.extend(timezone);
 
 export const llm: Command["execute"] = async ({ msg, ref }, c) => {
-  let [model, prompt] = ["openai/gpt-4.1", msg];
+  let [model, prompt] = ["openai/gpt-4.1-mini", msg];
   if (msg.startsWith("/")) {
     [model, prompt] = msg.slice(1).split(" ", 2);
   }
