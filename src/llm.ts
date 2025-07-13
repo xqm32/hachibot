@@ -12,14 +12,16 @@ dayjs.extend(utc);
 dayjs.extend(timezone);
 
 export const llm: Command["execute"] = async ({ msg, ref }, c) => {
-  let [model, prompt] = ["openai/gpt-4.1-mini", msg];
+  let verbose = false;
+  let [model, prompt] = ["openrouter/auto", msg];
   if (msg.startsWith("/")) {
+    verbose = true;
     [model, prompt] = msg.slice(1).split(" ", 2);
   }
 
   // const gateway = createGateway({ apiKey: c.env.AI_GATEWAY_API_KEY });
   const openrouter = createOpenRouter({ apiKey: c.env.OPENROUTER_API_KEY });
-  const { text } = await generateText({
+  const { text, response } = await generateText({
     model: openrouter(model),
     tools: {
       today: tool({
@@ -36,6 +38,9 @@ export const llm: Command["execute"] = async ({ msg, ref }, c) => {
     stopWhen: stepCountIs(5),
     prompt: [ref, prompt].filter(Boolean).join("\n"),
   });
+  if (verbose) {
+    return `${response.modelId}: ${text}`;
+  }
   return text;
 };
 
