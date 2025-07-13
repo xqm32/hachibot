@@ -6,6 +6,7 @@
       "dependencies": {
         "@ai-sdk/gateway": "^1.0.0-beta.4",
         "@hono/zod-validator": "^0.7.0",
+        "@openrouter/ai-sdk-provider": "^1.0.0-beta.1",
         "ai": "^5.0.0-beta.12",
         "dayjs": "^1.11.13",
         "hono": "^4.8.3",
@@ -189,6 +190,8 @@
     "@octokit/webhooks": ["@octokit/webhooks@14.0.2", "", { "dependencies": { "@octokit/openapi-webhooks-types": "12.0.3", "@octokit/request-error": "^7.0.0", "@octokit/webhooks-methods": "^6.0.0" } }, "sha512-16TtZXNOfH8RaRsV+iag5dTYeJvdOdZDBcpEPCULdKS3eTRJqAYxBNZPFaDJ3cx3WNyvbaQ0IxsPpnaR/tgGFA=="],
 
     "@octokit/webhooks-methods": ["@octokit/webhooks-methods@6.0.0", "", {}, "sha512-MFlzzoDJVw/GcbfzVC1RLR36QqkTLUf79vLVO3D+xn7r0QgxnFoLZgtrzxiQErAjFUOdH6fas2KeQJ1yr/qaXQ=="],
+
+    "@openrouter/ai-sdk-provider": ["@openrouter/ai-sdk-provider@1.0.0-beta.1", "", { "peerDependencies": { "ai": "^5.0.0-beta.12", "zod": "^3.25.74" } }, "sha512-LsfB425JuE9qiQFnhkm3sn1Vf34W511QIeGnALwvr6nbl1yu2QhlX0N9kL2dPipLbNVWDszmlHe7DsK5ZuzSsg=="],
 
     "@opentelemetry/api": ["@opentelemetry/api@1.9.0", "", {}, "sha512-3giAOQvZiH5F9bMlMiv8+GSPMeqg0dbaeo58/0SlA9sxSqZhnUtxzX9/2FzyhS9sWQf5S0GJE0AKBrFqjpeYcg=="],
 
