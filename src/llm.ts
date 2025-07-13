@@ -6,6 +6,7 @@ import utc from "dayjs/plugin/utc";
 import { z } from "zod/v4";
 import { Command } from "./command";
 import { lolv2 } from "./lol";
+import { createOpenRouter } from "@openrouter/ai-sdk-provider";
 
 dayjs.extend(utc);
 dayjs.extend(timezone);
@@ -16,9 +17,10 @@ export const llm: Command["execute"] = async ({ msg, ref }, c) => {
     [model, prompt] = msg.slice(1).split(" ", 2);
   }
 
-  const gateway = createGateway({ apiKey: c.env.AI_GATEWAY_API_KEY });
+  // const gateway = createGateway({ apiKey: c.env.AI_GATEWAY_API_KEY });
+  const openrouter = createOpenRouter({ apiKey: c.env.OPENROUTER_API_KEY });
   const { text } = await generateText({
-    model: gateway(model),
+    model: openrouter(model),
     tools: {
       today: tool({
         description: "Get today's date and time",
