@@ -4,6 +4,7 @@ import guyu from "./guyu";
 import { llm, llmlist } from "./llm";
 import room from "./room";
 import { lol, lolv2 } from "./lol";
+import _ from "lodash";
 
 export interface Command {
   name: string;
@@ -33,6 +34,12 @@ export const commands: Command[] = [
   { name: "lol", execute: lol },
   { name: "lolv2", execute: lolv2 },
   { name: "", execute: llm },
+  {
+    name: "谁在打谷雨同学",
+    execute: () =>
+      _.sample(["嘟嘟可", "Abx", "鹊", "雨酱", "谷雨同学", "mskk是真的"]) +
+      "在打谷雨同学",
+  },
 ];
 
 commands.sort((a, b) => a.name.localeCompare(b.name)).reverse();
