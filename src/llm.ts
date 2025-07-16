@@ -17,6 +17,7 @@ export const llm: Command["execute"] = async ({ msg, ref }, c) => {
   if (msg.startsWith("/")) {
     verbose = true;
     [model, prompt] = msg.slice(1).split(" ", 2);
+    prompt = msg.slice(msg.indexOf(" ") + 1);
   }
 
   // const gateway = createGateway({ apiKey: c.env.AI_GATEWAY_API_KEY });
