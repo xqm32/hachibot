@@ -43,10 +43,11 @@ export const commands: Command[] = [
   { name: "谁在打", execute: ({ msg }) => `不可以打${msg}！！！` },
   {
     name: "?",
-    execute: ({ msg }, c) =>
+    execute: ({ ref }, c) =>
       llm(
         {
-          msg: `Please judge whether the following message is good or bad. Reply with only a single word or short phrase that best describes the quality of the message, such as "good", "not good", "bad", or "not bad". Do not provide any explanation. Message: "${msg}"`,
+          msg: `Please judge whether the following message is good or bad. Reply with only a single word or short phrase that best describes the quality of the message, such as "good", "not good", "bad", or "not bad". Do not provide any explanation. Message:`,
+          ref,
         },
         c
       ),
