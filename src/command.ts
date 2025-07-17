@@ -41,6 +41,16 @@ export const commands: Command[] = [
       "在打谷雨同学",
   },
   { name: "谁在打", execute: ({ msg }) => `不可以打${msg}！！！` },
+  {
+    name: "?",
+    execute: ({ msg }, c) =>
+      llm(
+        {
+          msg: `Please judge whether the following message is good or bad. Reply with only a single word or short phrase that best describes the quality of the message, such as "good", "not good", "bad", or "not bad". Do not provide any explanation. Message: "${msg}"`,
+        },
+        c
+      ),
+  },
 ];
 
 commands.sort((a, b) => a.name.localeCompare(b.name)).reverse();
