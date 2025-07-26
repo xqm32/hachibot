@@ -13,7 +13,7 @@ dayjs.extend(timezone);
 
 export const llm: Command["execute"] = async ({ msg, ref }, c) => {
   let verbose = false;
-  let [model, prompt] = ["openai/gpt-4.1-mini", msg];
+  let [model, prompt] = ["qwen/qwen3-coder", msg];
   if (msg.startsWith("/")) {
     verbose = true;
     [model, prompt] = msg.slice(1).split(" ", 2);
