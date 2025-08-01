@@ -6,24 +6,19 @@ import utc from "dayjs/plugin/utc";
 import { z } from "zod/v4";
 import { Command } from "./command";
 import { lolv2 } from "./lol";
-import { createOpenRouter } from "@openrouter/ai-sdk-provider";
 
 dayjs.extend(utc);
 dayjs.extend(timezone);
 
 export const llm: Command["execute"] = async ({ msg, ref }, c) => {
-  let verbose = false;
-  let [model, prompt] = ["google/gemini-2.5-flash", msg];
-  if (msg.startsWith("/")) {
-    verbose = true;
-    [model, prompt] = msg.slice(1).split(" ", 2);
-    prompt = msg.slice(msg.indexOf(" ") + 1);
-  }
+  const modelsAbbr = {
+    gulu: "google/gemini-2.5-pro",
+    gpt: "openai/gpt-4.1",
+    dsr: "deepseek/deepseek-r1",
+    kimi: "moonshotai/kimi-k2",
+  };
 
-  // const gateway = createGateway({ apiKey: c.env.AI_GATEWAY_API_KEY });
-  const openrouter = createOpenRouter({ apiKey: c.env.OPENROUTER_API_KEY });
-  const { text, response } = await generateText({
-    model: openrouter(model),
+  const toolParams = {
     tools: {
       today: tool({
         description: "Get today's date and time",
@@ -37,7 +32,25 @@ export const llm: Command["execute"] = async ({ msg, ref }, c) => {
       }),
     },
     stopWhen: stepCountIs(5),
+  };
+
+  let verbose = false;
+  let [model, prompt] = ["google/gemini-2.5-pro", msg];
+  if (msg.startsWith("/")) {
+    verbose = true;
+    [model, prompt] = msg.slice(1).split(" ", 2);
+    if (model in modelsAbbr) {
+      model = modelsAbbr[model as keyof typeof modelsAbbr];
+    }
+    prompt = msg.slice(msg.indexOf(" ") + 1);
+  }
+
+  const gateway = createGateway({ apiKey: c.env.AI_GATEWAY_API_KEY });
+  // const openrouter = createOpenRouter({ apiKey: c.env.OPENROUTER_API_KEY });
+  const { text, response } = await generateText({
+    model: gateway(model),
     prompt: [ref, prompt].filter(Boolean).join("\n"),
+    ...(model.includes("gemini") ? toolParams : {}),
   });
   if (verbose) {
     return `${response.modelId}: ${text}`;
