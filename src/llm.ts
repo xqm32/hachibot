@@ -13,7 +13,7 @@ dayjs.extend(timezone);
 export const llm: Command["execute"] = async ({ msg, ref }, c) => {
   const modelsAbbr = {
     gulu: "google/gemini-2.5-pro",
-    guyu: "google/gemini-2.5-pro",
+    gυyυ: "google/gemini-2.5-pro",
     gpt: "openai/gpt-4.1",
     dsr: "deepseek/deepseek-r1",
     kimi: "moonshotai/kimi-k2",
@@ -41,7 +41,7 @@ export const llm: Command["execute"] = async ({ msg, ref }, c) => {
   if (msg.startsWith("/")) {
     verbose = true;
     [model, prompt] = msg.slice(1).split(" ", 2);
-    if (model === "guyu") {
+    if (model === "gυyυ") {
       guyu = true;
     }
     if (model in modelsAbbr) {
