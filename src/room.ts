@@ -15,13 +15,14 @@ export default async () =>
   (
     await Promise.all(
       [
+        "https://play.moyubei.site/api/rooms",
         "https://gi.xqm32.org/api/rooms",
         "https://gi.xqm32.org/beta/api/rooms",
       ].map(async (url) => await (await fetch(url)).json())
     )
   )
     .flatMap((rooms, i) =>
-      [i === 0 ? "=== Main Rooms ===" : "=== Beta Rooms ==="].concat(
+      [i === 0 ? "=== 摸鱼杯 ===" : i === 1 ? "=== Main Rooms ===" : "=== Beta Rooms ==="].concat(
         Rooms.parse(rooms).map(
           (room) =>
             `${room.id} 👉 ${room.players.map((p) => p.name).join(" 🆚 ")}`
