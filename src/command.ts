@@ -40,6 +40,10 @@ export const commands: Command[] = [
       _.sample(["嘟嘟可", "Abx", "鹊", "雨酱", "谷雨同学", "mskk是真的"]) +
       "在打谷雨同学",
   },
+  {
+    name: "谁在打摸鱼杯",
+    execute: room,
+  },
   { name: "谁在打", execute: ({ msg }) => `不可以打${msg}！！！` },
   {
     name: "?",

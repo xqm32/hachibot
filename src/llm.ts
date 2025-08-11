@@ -6,6 +6,7 @@ import utc from "dayjs/plugin/utc";
 import { z } from "zod/v4";
 import { Command } from "./command";
 import { lolv2 } from "./lol";
+import room from "./room";
 
 dayjs.extend(utc);
 dayjs.extend(timezone);
@@ -30,6 +31,11 @@ export const llm: Command["execute"] = async ({ msg, ref }, c) => {
         description: "Get recent League of Legends matches",
         inputSchema: z.object().describe("No input required"),
         execute: () => lolv2({ msg, ref }, c),
+      }),
+      room: tool({
+        description: "获取七圣召唤（摸鱼杯、Main和Beta）对局列表",
+        inputSchema: z.object().describe("No input required"),
+        execute: () => room(),
       }),
     },
     stopWhen: stepCountIs(5),
