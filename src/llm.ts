@@ -34,7 +34,7 @@ export const llm: Command["execute"] = async ({ msg, ref }, c) => {
       }),
       room: tool({
         description:
-          "获取雨酱的七圣召唤模拟器（也叫七圣召唤、雨酱牌）的摸鱼杯、Main和Beta对局列表",
+          "获取雨酱的七圣召唤模拟器（也叫七圣召唤、雨酱牌）的摸鱼杯、Main和Beta对局（房间）列表",
         inputSchema: z.object().describe("No input required"),
         execute: () => room(),
       }),
