@@ -11,12 +11,13 @@ app.post(
   zValidator(
     "form",
     z.object({
+      qq: z.string(),
       msg: z.string(),
       ref: z.string().optional(),
     })
   ),
   async (c) => {
-    const { msg, ref } = c.req.valid("form");
+    const { qq, msg, ref } = c.req.valid("form");
 
     if (msg.startsWith("r")) {
       const urls = [
@@ -44,6 +45,8 @@ app.post(
       );
       return c.text(invokations.join("\n"));
     }
+
+    if (msg === "who am i") return c.text(`you are ${qq}`);
 
     if (msg.startsWith("model set default")) {
       const model = msg.match(/^model set default\s*([^\s]+)/)?.[1];
