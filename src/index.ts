@@ -48,6 +48,14 @@ app.post(
 
     if (msg === "who am i") return c.text(`you are ${qq}`);
 
+    if (msg === "credits") {
+      const response = await fetch("https://openrouter.ai/api/v1/credits", {
+        headers: { Authorization: `Bearer ${c.env.OPENROUTER_API_KEY}` },
+      });
+      const text = await response.text();
+      return c.text(text);
+    }
+
     if (msg.startsWith("model set default")) {
       const model = msg.match(/^model set default\s*([^\s]+)/)?.[1];
       if (!model) return c.text("error: model not specified");
