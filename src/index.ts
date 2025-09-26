@@ -19,7 +19,7 @@ app.post(
   async (c) => {
     const { qq, msg, ref } = c.req.valid("form");
 
-    if (msg.startsWith("r")) {
+    if (msg === "r" || msg === "rooms") {
       const urls = [
         "===== Main =====",
         "https://gi.xqm32.org/api/rooms",
@@ -56,7 +56,7 @@ app.post(
       return c.text(text);
     }
 
-    if (msg.startsWith("set default model to")) {
+    if (msg.startsWith("set default model to") && msg.length < 64) {
       const model = msg.match(/^set default model to\s+([^\s]+)/)?.[1];
       if (!model) return c.text("error: model not specified");
       await c.env.HACHIBOT.put("defaultModel", model);
@@ -69,7 +69,7 @@ app.post(
       return c.text(`defaultModel is ${defaultModel}`);
     }
 
-    if (msg.startsWith("list models")) {
+    if (msg.startsWith("list models") && msg.length < 64) {
       const response = await fetch("https://openrouter.ai/api/v1/models");
       const { data: models } = (await response.json()) as {
         data: { id: string }[];
@@ -96,11 +96,20 @@ app.post(
       const match = msg.match(/^\/([^\s]+)(.*)/s);
       if (!match) return c.text("error: model not specified after /");
       const [, specifiedModel, restMsg] = match;
-      const model = openrouter(specifiedModel);
 
       const messages: ModelMessage[] = [{ role: "user", content: restMsg }];
       if (ref) messages.unshift({ role: "user", content: ref });
 
+      if (specifiedModel === "/") {
+        const defaultModel = await c.env.HACHIBOT.get("defaultModel");
+        if (!defaultModel)
+          return c.text("error: defaultModel not set, cannot use //");
+        const model = openrouter(defaultModel);
+        const { text } = await generateText({ model, messages });
+        return c.text(text);
+      }
+
+      const model = openrouter(specifiedModel);
       const { text } = await generateText({ model, messages });
       return c.text(text);
     }
