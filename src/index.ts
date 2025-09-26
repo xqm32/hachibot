@@ -58,9 +58,17 @@ app.post(
       return c.text(`defaultModel is ${defaultModel}`);
     }
 
+    if (msg.startsWith("at")) {
+      const match = msg.match(/^at\s+([^\s]+)\s+(.*)/s);
+      if (!match) return c.text("error: invalid at command");
+      const [, at, prompt] = match;
+      await c.env.HACHIBOT.put(`@${at}`, prompt);
+      return c.text(`@${at} set to ${prompt}`);
+    }
+
     const openrouter = createOpenRouter({ apiKey: c.env.OPENROUTER_API_KEY });
     if (msg.startsWith("/")) {
-      const match = msg.match(/^\/([^\s]+)(.*)/);
+      const match = msg.match(/^\/([^\s]+)(.*)/s);
       if (!match) return c.text("error: model not specified after /");
       const [, specifiedModel, restMsg] = match;
       const model = openrouter(specifiedModel);
@@ -75,6 +83,22 @@ app.post(
     const defaultModel = await c.env.HACHIBOT.get("defaultModel");
     if (!defaultModel) return c.text("error: defaultModel not set");
     const model = openrouter(defaultModel);
+
+    if (msg.startsWith("@")) {
+      const match = msg.match(/^(@[^\s]+)\s+(.*)/s);
+      if (!match) return c.text("error: invalid @ command");
+      const [, at, restMsg] = match;
+
+      const prompt = await c.env.HACHIBOT.get(at);
+      if (!prompt) return c.text(`error: no prompt found for ${at}`);
+
+      const messages: ModelMessage[] = [{ role: "system", content: prompt }];
+      if (ref) messages.push({ role: "user", content: ref });
+      messages.push({ role: "user", content: restMsg });
+
+      const { text } = await generateText({ model, messages });
+      return c.text(text);
+    }
 
     const messages: ModelMessage[] = [{ role: "user", content: msg }];
     if (ref) messages.unshift({ role: "user", content: ref });
