@@ -1,4 +1,5 @@
 import { zValidator } from "@hono/zod-validator";
+import { request } from "@octokit/request";
 import { createOpenRouter } from "@openrouter/ai-sdk-provider";
 import { generateText, ModelMessage } from "ai";
 import { Hono } from "hono";
@@ -44,6 +45,22 @@ app.post(
         })
       );
       return c.text(invokations.join("\n"));
+    }
+
+    if (msg === "gy" || msg === "guyu") {
+      const response = await request("GET /repos/{owner}/{repo}/pulls", {
+        owner: "genius-invokation",
+        repo: "genius-invokation",
+        state: "all",
+        sort: "updated",
+        direction: "desc",
+        headers: {
+          "X-GitHub-Api-Version": "2022-11-28",
+        },
+      });
+      const [pull] = response.data;
+      if (!pull) return c.text("no pull requests found");
+      return c.text(`${pull.title}\n${pull.html_url}`);
     }
 
     if (msg === "who am i") return c.text(`you are ${qq}`);
