@@ -9,7 +9,13 @@
 	"compatibility_date": "2025-09-26",
 	"observability": {
 		"enabled": true
-	}
+	},
+	"kv_namespaces": [
+		{
+			"binding": "HACHIBOT",
+			"id": "4b7e44bd53de45cea1e3846555f6180b"
+		}
+	]
 	/**
 	 * Smart Placement
 	 * Docs: https://developers.cloudflare.com/workers/configuration/smart-placement/#smart-placement
