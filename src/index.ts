@@ -108,4 +108,15 @@ app.post(
   }
 );
 
+app.post("/api/v1/chat/completions", (c) =>
+  fetch("https://openrouter.ai/api/v1/chat/completions", {
+    method: "POST",
+    headers: {
+      Authorization: `Bearer ${c.env.OPENROUTER_API_KEY}`,
+      "Content-Type": "application/json",
+    },
+    body: c.req.raw.body,
+  })
+);
+
 export default app;
