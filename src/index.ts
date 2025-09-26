@@ -70,17 +70,17 @@ app.post(
 
       const { text } = await generateText({ model, messages });
       return c.text(text);
-    } else {
-      const defaultModel = await c.env.HACHIBOT.get("defaultModel");
-      if (!defaultModel) return c.text("error: defaultModel not set");
-      const model = openrouter(defaultModel);
-
-      const messages: ModelMessage[] = [{ role: "user", content: msg }];
-      if (ref) messages.unshift({ role: "user", content: ref });
-
-      const { text } = await generateText({ model, messages });
-      return c.text(text);
     }
+
+    const defaultModel = await c.env.HACHIBOT.get("defaultModel");
+    if (!defaultModel) return c.text("error: defaultModel not set");
+    const model = openrouter(defaultModel);
+
+    const messages: ModelMessage[] = [{ role: "user", content: msg }];
+    if (ref) messages.unshift({ role: "user", content: ref });
+
+    const { text } = await generateText({ model, messages });
+    return c.text(text);
   }
 );
 
