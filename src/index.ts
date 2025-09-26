@@ -56,17 +56,31 @@ app.post(
       return c.text(text);
     }
 
-    if (msg.startsWith("model set default")) {
-      const model = msg.match(/^model set default\s*([^\s]+)/)?.[1];
+    if (msg.startsWith("set default model to")) {
+      const model = msg.match(/^set default model to\s+([^\s]+)/)?.[1];
       if (!model) return c.text("error: model not specified");
       await c.env.HACHIBOT.put("defaultModel", model);
       return c.text(`defaultModel set to ${model}`);
     }
 
-    if (msg.startsWith("model get default")) {
+    if (msg === "get default model") {
       const defaultModel = await c.env.HACHIBOT.get("defaultModel");
       if (!defaultModel) return c.text("error: defaultModel not set");
       return c.text(`defaultModel is ${defaultModel}`);
+    }
+
+    if (msg.startsWith("list models")) {
+      const response = await fetch("https://openrouter.ai/api/v1/models");
+      const { data: models } = (await response.json()) as {
+        data: { id: string }[];
+      };
+
+      const keyword = msg.match(/^list models like\s+([^\s]+)/)?.[1];
+      if (!keyword) return c.text(models.map((model) => model.id).join("\n"));
+      const filteredModels = models
+        .map((model) => model.id)
+        .filter((id) => id.includes(keyword));
+      return c.text(filteredModels.join("\n"));
     }
 
     if (msg.startsWith("at")) {
