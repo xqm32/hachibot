@@ -20,6 +20,23 @@ app.post(
   async (c) => {
     const { qq, msg, ref } = c.req.valid("form");
 
+    if (msg === "help"){
+      return c.text(`This help message is not automatically updated when features are updated. Last update: 2025-09-26 by User670, based on commit 1720cc3 of xqm32/hachibot
+
+rooms - get GITCG simulator rooms. alias: r
+guyu - get latest pull request for GITCG simulator. alias: gy
+who am i - display your QQ number.
+credits - get remaining credits for OpenRouter.
+set default model to <model_id>
+get default model
+list models
+list models like <keyword> - filter models by keyword
+at <alias> <prompt> - set custom system prompt
+/<model_id> <message> - call specified model. / is shorthand for default model.
+@<alias> <message> - call default model with system prompt
+
+Messages that do not match above patterns call the default model.`);
+    }
     if (msg === "r" || msg === "rooms") {
       const urls = [
         "===== Main =====",
