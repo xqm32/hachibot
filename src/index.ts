@@ -21,7 +21,7 @@ app.post(
     const { qq, msg, ref } = c.req.valid("form");
 
     if (msg === "help"){
-      return c.text(`This help message is not automatically updated when features are updated. Last update: 2025-09-26 by User670
+      return c.text(`This help message is not automatically updated when features are updated. Last update: 2025-09-26 by User670, based on commit 1720cc3 xqm32/hachibot
 
 rooms - get GITCG simulator rooms. alias: r
 guyu - get latest pull request for GITCG simulator. alias: gy
