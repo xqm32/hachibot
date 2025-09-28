@@ -188,12 +188,12 @@ app.post(
       return c.text(text);
     }
 
-    if (msg.startsWith("summarize")) {
-      const url = msg.match(/^summarize\s+([^\s]+)/)?.[1];
+    if (msg.startsWith("tldr")) {
+      const url = msg.match(/^tldr\s+([^\s]+)/)?.[1];
       if (!url) return c.text("error: url not specified");
 
-      const prompt = await c.env.HACHIBOT.get("#summarize");
-      if (!prompt) return c.text("error: no prompt found for #summarize");
+      const prompt = await c.env.HACHIBOT.get("#tldr");
+      if (!prompt) return c.text("error: no prompt found for #tldr");
 
       const response = await fetch(url);
       const content = await response.text();
