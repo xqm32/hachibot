@@ -100,9 +100,9 @@ app.post(
       return c.text(filteredModels.join("\n"));
     }
 
-    if (msg.startsWith(">#")) {
-      const match = msg.match(/^>(#[^\s]+)\s*(.*)/s);
-      if (!match) throw new Error("error: invalid ># command");
+    if (msg.startsWith("set #")) {
+      const match = msg.match(/^set (#[^\s]+)\s*(.*)/s);
+      if (!match) throw new Error("error: invalid set # command");
       const [, tag, restMsg] = match;
       const prompt = restMsg.length > 0 ? restMsg : ref;
       if (!prompt) throw new Error("error: prompt is empty");
@@ -110,12 +110,29 @@ app.post(
       return c.text(`${tag} set to ${prompt}`);
     }
 
-    if (msg.startsWith("<#")) {
-      const tag = msg.match(/^<(#[^\s]+)/s)?.[1];
-      if (!tag) throw new Error("error: invalid <# command");
+    if (msg.startsWith("get #")) {
+      const tag = msg.match(/^get (#[^\s]+)/s)?.[1];
+      if (!tag) throw new Error("error: invalid get # command");
       const prompt = await c.env.HACHIBOT.get(tag);
       if (!prompt) throw new Error(`error: no prompt found for ${tag}`);
       return c.text(prompt);
+    }
+
+    if (msg.startsWith("set /")) {
+      const match = msg.match(/^set (\/[^\s]+)\s*(.*)/s);
+      if (!match) throw new Error("error: invalid set / command");
+      const [, shortcut, model] = match;
+      if (!model) throw new Error("error: model is empty");
+      await c.env.HACHIBOT.put(shortcut, model);
+      return c.text(`${shortcut} set to ${model}`);
+    }
+
+    if (msg.startsWith("get /")) {
+      const shortcut = msg.match(/^get (\/[^\s]+)/s)?.[1];
+      if (!shortcut) throw new Error("error: invalid get / command");
+      const model = await c.env.HACHIBOT.get(shortcut);
+      if (!model) throw new Error(`error: no model found for ${shortcut}`);
+      return c.text(model);
     }
 
     const openrouter = createOpenRouter({ apiKey: c.env.OPENROUTER_API_KEY });
@@ -125,6 +142,12 @@ app.post(
         const defaultModel = await c.env.HACHIBOT.get("defaultModel");
         if (!defaultModel) throw new Error("error: defaultModel not set");
         return [openrouter(defaultModel), msg];
+      } else if (!match[1].includes("/")) {
+        const [, shortcut, realMsg] = match;
+        const shortcutModel = await c.env.HACHIBOT.get(`/${shortcut}`);
+        if (!shortcutModel)
+          throw new Error(`error: no model found for /${shortcut}`);
+        return [openrouter(shortcutModel), realMsg];
       }
       const [, specifiedModel, realMsg] = match;
       return [openrouter(specifiedModel), realMsg];
