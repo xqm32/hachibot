@@ -136,22 +136,23 @@ app.post(
     }
 
     const openrouter = createOpenRouter({ apiKey: c.env.OPENROUTER_API_KEY });
-    const [model, realMsg] = await (async () => {
+    const [modelName, realMsg] = await (async () => {
       const match = msg.match(/^\/([^\s]+)\s*(.*)/s);
       if (!match || match[1] === "/") {
-        const defaultModel = await c.env.HACHIBOT.get("defaultModel");
-        if (!defaultModel) throw new Error("error: defaultModel not set");
-        return [openrouter(defaultModel), msg];
+        const defaultModelName = await c.env.HACHIBOT.get("defaultModel");
+        if (!defaultModelName) throw new Error("error: defaultModel not set");
+        return [defaultModelName, msg];
       } else if (!match[1].includes("/")) {
         const [, shortcut, realMsg] = match;
-        const shortcutModel = await c.env.HACHIBOT.get(`/${shortcut}`);
-        if (!shortcutModel)
+        const shortcutModelName = await c.env.HACHIBOT.get(`/${shortcut}`);
+        if (!shortcutModelName)
           throw new Error(`error: no model found for /${shortcut}`);
-        return [openrouter(shortcutModel), realMsg];
+        return [shortcutModelName, realMsg];
       }
-      const [, specifiedModel, realMsg] = match;
-      return [openrouter(specifiedModel), realMsg];
+      const [, specifiedModelName, realMsg] = match;
+      return [specifiedModelName, realMsg];
     })();
+    const model = openrouter(modelName);
 
     if (realMsg.startsWith("help")) {
       const prompt = await c.env.HACHIBOT.get("#help");
@@ -229,6 +230,8 @@ app.post(
       const { text } = await generateText({ model, messages });
       return c.text(text);
     }
+
+    if (realMsg.length === 0) return c.text(`using model ${modelName}`);
 
     const messages: ModelMessage[] = [{ role: "user", content: realMsg }];
     if (ref) messages.unshift({ role: "user", content: ref });
