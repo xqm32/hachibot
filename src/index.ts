@@ -120,7 +120,7 @@ app.post(
 
     const openrouter = createOpenRouter({ apiKey: c.env.OPENROUTER_API_KEY });
     const [model, realMsg] = await (async () => {
-      const match = msg.match(/^\/([^\s]+)(.*)/s);
+      const match = msg.match(/^\/([^\s]+)\s*(.*)/s);
       if (!match || match[1] === "/") {
         const defaultModel = await c.env.HACHIBOT.get("defaultModel");
         if (!defaultModel) throw new Error("error: defaultModel not set");
