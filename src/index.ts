@@ -136,7 +136,7 @@ app.post(
     const model = openrouter(defaultModel);
 
     if (msg.startsWith("@")) {
-      const match = msg.match(/^(@[^\s]+)\s+(.*)/s);
+      const match = msg.match(/^(@[^\s]+)\s*(.*)/s);
       if (!match) return c.text("error: invalid @ command");
       const [, at, restMsg] = match;
 
