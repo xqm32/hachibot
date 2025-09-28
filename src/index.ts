@@ -137,6 +137,20 @@ app.post(
     if (!defaultModel) return c.text("error: defaultModel not set");
     const model = openrouter(defaultModel);
 
+    if (msg === "hacker news") {
+      const prompt = await c.env.HACHIBOT.get("#hackernews");
+      if (!prompt) return c.text("error: no prompt found for #hackernews");
+
+      const response = await fetch("https://news.ycombinator.com/");
+      const content = await response.text();
+
+      const messages: ModelMessage[] = [{ role: "user", content }];
+      messages.unshift({ role: "system", content: prompt });
+
+      const { text } = await generateText({ model, messages });
+      return c.text(text);
+    }
+
     if (msg.startsWith("#")) {
       const match = msg.match(/^(#[^\s]+)\s*(.*)/s);
       if (!match) return c.text("error: invalid # command");
