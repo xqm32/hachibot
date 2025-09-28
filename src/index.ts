@@ -111,7 +111,7 @@ app.post(
     }
 
     if (msg.startsWith("<#")) {
-      const tag = msg.match(/^<(#\S+)>/)?.[1];
+      const tag = msg.match(/^<(#[^\s]+)/s)?.[1];
       if (!tag) return c.text("error: invalid <# command");
       const prompt = await c.env.HACHIBOT.get(tag);
       if (!prompt) return c.text(`error: no prompt found for ${tag}`);
