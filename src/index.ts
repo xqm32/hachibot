@@ -114,7 +114,7 @@ app.post(
       const tag = msg.match(/^<(#[^\s]+)/s)?.[1];
       if (!tag) throw new Error("error: invalid <# command");
       const prompt = await c.env.HACHIBOT.get(tag);
-      if (!prompt) return c.text(`error: no prompt found for ${tag}`);
+      if (!prompt) throw new Error(`error: no prompt found for ${tag}`);
       return c.text(prompt);
     }
 
@@ -197,7 +197,7 @@ app.post(
       const [, tag, restMsg] = match;
 
       const prompt = await c.env.HACHIBOT.get(tag);
-      if (!prompt) return c.text(`error: no prompt found for ${tag}`);
+      if (!prompt) throw new Error(`error: no prompt found for ${tag}`);
 
       const messages: ModelMessage[] = [{ role: "system", content: prompt }];
       if (ref) messages.push({ role: "user", content: ref });
