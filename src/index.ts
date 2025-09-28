@@ -137,6 +137,34 @@ app.post(
     if (!defaultModel) return c.text("error: defaultModel not set");
     const model = openrouter(defaultModel);
 
+    if (msg.startsWith("help")) {
+      const prompt = await c.env.HACHIBOT.get("#help");
+      if (!prompt) return c.text("error: no prompt found for #help");
+
+      const { data } = (await request(
+        "GET /repos/{owner}/{repo}/contents/{path}",
+        {
+          mediaType: { format: "raw" },
+          owner: "xqm32",
+          repo: "hachibot",
+          path: "src/index.ts",
+          headers: {
+            "X-GitHub-Api-Version": "2022-11-28",
+          },
+        }
+      )) as unknown as { data: string };
+      const messages: ModelMessage[] = [
+        { role: "system", content: prompt },
+        { role: "user", content: data },
+      ];
+
+      const restMsg = msg.match(/^help\s*(.*)/s)?.[1];
+      if (restMsg) messages.push({ role: "user", content: restMsg });
+
+      const { text } = await generateText({ model, messages });
+      return c.text(text);
+    }
+
     if (msg === "hacker news") {
       const prompt = await c.env.HACHIBOT.get("#hackernews");
       if (!prompt) return c.text("error: no prompt found for #hackernews");
