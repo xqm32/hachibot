@@ -73,19 +73,6 @@ app.post(
       return c.text(text);
     }
 
-    if (msg.startsWith("set default model to") && msg.length < 64) {
-      const model = msg.match(/^set default model to\s+([^\s]+)/)?.[1];
-      if (!model) throw new Error("error: model not specified");
-      await c.env.HACHIBOT.put("defaultModel", model);
-      return c.text(`defaultModel set to ${model}`);
-    }
-
-    if (msg === "get default model") {
-      const defaultModel = await c.env.HACHIBOT.get("defaultModel");
-      if (!defaultModel) throw new Error("error: defaultModel not set");
-      return c.text(`defaultModel is ${defaultModel}`);
-    }
-
     if (msg.startsWith("list models") && msg.length < 64) {
       const response = await fetch("https://openrouter.ai/api/v1/models");
       const { data: models } = (await response.json()) as {
@@ -139,8 +126,8 @@ app.post(
     const [modelName, realMsg] = await (async () => {
       const match = msg.match(/^\/([^\s]+)\s*(.*)/s);
       if (!match || match[1] === "/") {
-        const defaultModelName = await c.env.HACHIBOT.get("defaultModel");
-        if (!defaultModelName) throw new Error("error: defaultModel not set");
+        const defaultModelName = await c.env.HACHIBOT.get("/default");
+        if (!defaultModelName) throw new Error("error: default model not set");
         return [defaultModelName, msg];
       } else if (!match[1].includes("/")) {
         const [, shortcut, realMsg] = match;
