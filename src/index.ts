@@ -89,36 +89,36 @@ app.post(
 
     if (msg.startsWith("set #")) {
       const match = msg.match(/^set (#[^\s]+)\s*(.*)/s);
-      if (!match) throw new Error("error: invalid set # command");
+      if (!match) throw new Error("invalid set # command");
       const [, tag, restMsg] = match;
       const prompt = restMsg.length > 0 ? restMsg : ref;
-      if (!prompt) throw new Error("error: prompt is empty");
+      if (!prompt) throw new Error("prompt is empty");
       await c.env.HACHIBOT.put(tag, prompt);
       return c.text(`${tag} set to ${prompt}`);
     }
 
     if (msg.startsWith("get #")) {
       const tag = msg.match(/^get (#[^\s]+)/s)?.[1];
-      if (!tag) throw new Error("error: invalid get # command");
+      if (!tag) throw new Error("invalid get # command");
       const prompt = await c.env.HACHIBOT.get(tag);
-      if (!prompt) throw new Error(`error: no prompt found for ${tag}`);
+      if (!prompt) throw new Error(`no prompt found for ${tag}`);
       return c.text(prompt);
     }
 
     if (msg.startsWith("set /")) {
       const match = msg.match(/^set (\/[^\s]+)\s*(.*)/s);
-      if (!match) throw new Error("error: invalid set / command");
+      if (!match) throw new Error("invalid set / command");
       const [, shortcut, model] = match;
-      if (!model) throw new Error("error: model is empty");
+      if (!model) throw new Error("model is empty");
       await c.env.HACHIBOT.put(shortcut, model);
       return c.text(`${shortcut} set to ${model}`);
     }
 
     if (msg.startsWith("get /")) {
       const shortcut = msg.match(/^get (\/[^\s]+)/s)?.[1];
-      if (!shortcut) throw new Error("error: invalid get / command");
+      if (!shortcut) throw new Error("invalid get / command");
       const model = await c.env.HACHIBOT.get(shortcut);
-      if (!model) throw new Error(`error: no model found for ${shortcut}`);
+      if (!model) throw new Error(`no model found for ${shortcut}`);
       return c.text(model);
     }
 
@@ -127,13 +127,13 @@ app.post(
       const match = msg.match(/^\/([^\s]+)\s*(.*)/s);
       if (!match || match[1] === "/") {
         const defaultModelName = await c.env.HACHIBOT.get("/default");
-        if (!defaultModelName) throw new Error("error: default model not set");
+        if (!defaultModelName) throw new Error("default model not set");
         return [defaultModelName, msg];
       } else if (!match[1].includes("/")) {
         const [, shortcut, realMsg] = match;
         const shortcutModelName = await c.env.HACHIBOT.get(`/${shortcut}`);
         if (!shortcutModelName)
-          throw new Error(`error: no model found for /${shortcut}`);
+          throw new Error(`no model found for /${shortcut}`);
         return [shortcutModelName, realMsg];
       }
       const [, specifiedModelName, realMsg] = match;
@@ -143,7 +143,7 @@ app.post(
 
     if (realMsg.startsWith("help")) {
       const prompt = await c.env.HACHIBOT.get("#help");
-      if (!prompt) throw new Error("error: no prompt found for #help");
+      if (!prompt) throw new Error("no prompt found for #help");
 
       const { data } = (await request(
         "GET /repos/{owner}/{repo}/contents/{path}",
@@ -172,7 +172,7 @@ app.post(
 
     if (realMsg === "hacker news") {
       const prompt = await c.env.HACHIBOT.get("#hackernews");
-      if (!prompt) throw new Error("error: no prompt found for #hackernews");
+      if (!prompt) throw new Error("no prompt found for #hackernews");
 
       const response = await fetch("https://news.ycombinator.com/");
       const content = await response.text();
@@ -186,10 +186,10 @@ app.post(
 
     if (realMsg.startsWith("tldr")) {
       const url = realMsg.match(/^tldr\s+([^\s]+)/)?.[1];
-      if (!url) throw new Error("error: url not specified");
+      if (!url) throw new Error("url not specified");
 
       const prompt = await c.env.HACHIBOT.get("#tldr");
-      if (!prompt) throw new Error("error: no prompt found for #tldr");
+      if (!prompt) throw new Error("no prompt found for #tldr");
 
       const response = await fetch(url);
       const content = await response.text();
@@ -204,11 +204,11 @@ app.post(
 
     if (realMsg.startsWith("#")) {
       const match = realMsg.match(/^(#[^\s]+)\s*(.*)/s);
-      if (!match) throw new Error("error: invalid # command");
+      if (!match) throw new Error("invalid # command");
       const [, tag, restMsg] = match;
 
       const prompt = await c.env.HACHIBOT.get(tag);
-      if (!prompt) throw new Error(`error: no prompt found for ${tag}`);
+      if (!prompt) throw new Error(`no prompt found for ${tag}`);
 
       const messages: ModelMessage[] = [{ role: "system", content: prompt }];
       if (ref) messages.push({ role: "user", content: ref });
