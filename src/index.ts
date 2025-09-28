@@ -241,4 +241,8 @@ app.post("/api/v1/chat/completions", (c) =>
   })
 );
 
+app.onError((err, c) => {
+  return c.text(`${err}`, 500);
+});
+
 export default app;
