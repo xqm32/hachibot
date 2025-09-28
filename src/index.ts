@@ -149,6 +149,7 @@ app.post(
           repo: "hachibot",
           path: "src/index.ts",
           headers: {
+            authorization: `Bearer ${c.env.GITHUB_TOKEN}`,
             "X-GitHub-Api-Version": "2022-11-28",
           },
         }
