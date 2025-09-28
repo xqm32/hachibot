@@ -100,14 +100,14 @@ app.post(
       return c.text(filteredModels.join("\n"));
     }
 
-    if (msg.startsWith("##")) {
-      const match = msg.match(/^##\s+([^\s]+)\s*(.*)/s);
-      if (!match) return c.text("error: invalid ## command");
+    if (msg.startsWith("/#")) {
+      const match = msg.match(/^\/(#[^\s]+)\s*(.*)/s);
+      if (!match) return c.text("error: invalid /# command");
       const [, tag, restMsg] = match;
       const prompt = restMsg.length > 0 ? restMsg : ref;
       if (!prompt) return c.text("error: prompt is empty");
-      await c.env.HACHIBOT.put(`@${tag}`, prompt);
-      return c.text(`@${tag} set to ${prompt}`);
+      await c.env.HACHIBOT.put(tag, prompt);
+      return c.text(`${tag} set to ${prompt}`);
     }
 
     const openrouter = createOpenRouter({ apiKey: c.env.OPENROUTER_API_KEY });
