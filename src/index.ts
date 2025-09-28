@@ -119,33 +119,18 @@ app.post(
     }
 
     const openrouter = createOpenRouter({ apiKey: c.env.OPENROUTER_API_KEY });
-    if (msg.startsWith("/")) {
+    const [model, realMsg] = await (async () => {
       const match = msg.match(/^\/([^\s]+)(.*)/s);
-      if (!match) throw new Error("error: model not specified after /");
-      const [, specifiedModel, restMsg] = match;
-
-      const messages: ModelMessage[] = [{ role: "user", content: restMsg }];
-      if (ref) messages.unshift({ role: "user", content: ref });
-
-      if (specifiedModel === "/") {
+      if (!match || match[1] === "/") {
         const defaultModel = await c.env.HACHIBOT.get("defaultModel");
-        if (!defaultModel)
-          throw new Error("error: defaultModel not set, cannot use //");
-        const model = openrouter(defaultModel);
-        const { text } = await generateText({ model, messages });
-        return c.text(text);
+        if (!defaultModel) throw new Error("error: defaultModel not set");
+        return [openrouter(defaultModel), msg];
       }
+      const [, specifiedModel, realMsg] = match;
+      return [openrouter(specifiedModel), realMsg];
+    })();
 
-      const model = openrouter(specifiedModel);
-      const { text } = await generateText({ model, messages });
-      return c.text(text);
-    }
-
-    const defaultModel = await c.env.HACHIBOT.get("defaultModel");
-    if (!defaultModel) throw new Error("error: defaultModel not set");
-    const model = openrouter(defaultModel);
-
-    if (msg.startsWith("help")) {
+    if (realMsg.startsWith("help")) {
       const prompt = await c.env.HACHIBOT.get("#help");
       if (!prompt) throw new Error("error: no prompt found for #help");
 
@@ -167,14 +152,14 @@ app.post(
         { role: "user", content: data },
       ];
 
-      const restMsg = msg.match(/^help\s*(.*)/s)?.[1];
+      const restMsg = realMsg.match(/^help\s*(.*)/s)?.[1];
       if (restMsg) messages.push({ role: "user", content: restMsg });
 
       const { text } = await generateText({ model, messages });
       return c.text(text);
     }
 
-    if (msg === "hacker news") {
+    if (realMsg === "hacker news") {
       const prompt = await c.env.HACHIBOT.get("#hackernews");
       if (!prompt) throw new Error("error: no prompt found for #hackernews");
 
@@ -188,8 +173,8 @@ app.post(
       return c.text(text);
     }
 
-    if (msg.startsWith("tldr")) {
-      const url = msg.match(/^tldr\s+([^\s]+)/)?.[1];
+    if (realMsg.startsWith("tldr")) {
+      const url = realMsg.match(/^tldr\s+([^\s]+)/)?.[1];
       if (!url) throw new Error("error: url not specified");
 
       const prompt = await c.env.HACHIBOT.get("#tldr");
@@ -206,8 +191,8 @@ app.post(
       return c.text(text);
     }
 
-    if (msg.startsWith("#")) {
-      const match = msg.match(/^(#[^\s]+)\s*(.*)/s);
+    if (realMsg.startsWith("#")) {
+      const match = realMsg.match(/^(#[^\s]+)\s*(.*)/s);
       if (!match) throw new Error("error: invalid # command");
       const [, tag, restMsg] = match;
 
@@ -222,7 +207,7 @@ app.post(
       return c.text(text);
     }
 
-    const messages: ModelMessage[] = [{ role: "user", content: msg }];
+    const messages: ModelMessage[] = [{ role: "user", content: realMsg }];
     if (ref) messages.unshift({ role: "user", content: ref });
 
     const { text } = await generateText({ model, messages });
