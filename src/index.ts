@@ -101,9 +101,11 @@ app.post(
     }
 
     if (msg.startsWith("at")) {
-      const match = msg.match(/^at\s+([^\s]+)\s+(.*)/s);
+      const match = msg.match(/^at\s+([^\s]+)\s*(.*)/s);
       if (!match) return c.text("error: invalid at command");
-      const [, at, prompt] = match;
+      const [, at, restMsg] = match;
+      const prompt = restMsg.length > 0 ? restMsg : ref;
+      if (!prompt) return c.text("error: prompt is empty");
       await c.env.HACHIBOT.put(`@${at}`, prompt);
       return c.text(`@${at} set to ${prompt}`);
     }
