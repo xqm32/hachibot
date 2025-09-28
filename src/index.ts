@@ -188,6 +188,24 @@ app.post(
       return c.text(text);
     }
 
+    if (msg.startsWith("summarize")) {
+      const url = msg.match(/^summarize\s+([^\s]+)/)?.[1];
+      if (!url) return c.text("error: url not specified");
+
+      const prompt = await c.env.HACHIBOT.get("#summarize");
+      if (!prompt) return c.text("error: no prompt found for #summarize");
+
+      const response = await fetch(url);
+      const content = await response.text();
+
+      const messages: ModelMessage[] = [
+        { role: "system", content: prompt },
+        { role: "user", content },
+      ];
+      const { text } = await generateText({ model, messages });
+      return c.text(text);
+    }
+
     if (msg.startsWith("#")) {
       const match = msg.match(/^(#[^\s]+)\s*(.*)/s);
       if (!match) return c.text("error: invalid # command");
