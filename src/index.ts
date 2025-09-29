@@ -102,33 +102,6 @@ app.post(
       return c.text(`${value}`);
     }
 
-    if (msg.startsWith("addmy")) {
-      const match = msg.match(/^addmy\s+(\S+)\s+(.*)/s);
-      if (!match) throw new Error("invalid addmy command");
-      const [, type, value] = match;
-      await c.env.hachibot
-        .prepare("INSERT INTO stores (qq, type, value) VALUES (?, ?, ?)")
-        .bind(qq, type, value)
-        .run();
-      return c.text("added");
-    }
-
-    if (msg.startsWith("listmy")) {
-      const type = msg.match(/^listmy\s+(\S+)/s)?.[1];
-      if (!type) throw new Error("invalid listmy command");
-      const { results } = await c.env.hachibot
-        .prepare("SELECT * FROM stores WHERE qq = ? AND type = ?")
-        .bind(qq, type)
-        .run();
-      if (results.length === 0) return c.text("no records found");
-      const lines = results.map((row) => {
-        const id = row.rowid as number;
-        const value = row.value as string;
-        return `${id}: ${value}`;
-      });
-      return c.text(lines.join("\n"));
-    }
-
     const openrouter = createOpenRouter({ apiKey: c.env.OPENROUTER_API_KEY });
     const [modelName, realMsg] = await (async () => {
       const match = msg.match(/^\/([^\s]+)\s*(.*)/s);
