@@ -141,6 +141,25 @@ app.post(
     })();
     const model = openrouter(modelName);
 
+    if (realMsg.startsWith("image")) {
+      if (!ref) throw new Error("image prompt is empty");
+      const refUrl = URL.parse(ref);
+      if (!refUrl) throw new Error("invalid image url");
+      const prompt = realMsg.match(/^image\s*(.*)/s)?.[1];
+      if (!prompt) throw new Error("image prompt is empty");
+      const messages: ModelMessage[] = [
+        {
+          role: "user",
+          content: [
+            { type: "image", image: refUrl },
+            { type: "text", text: prompt },
+          ],
+        },
+      ];
+      const { text } = await generateText({ model, messages });
+      return c.text(text);
+    }
+
     if (realMsg.startsWith("help")) {
       const prompt = await c.env.HACHIBOT.get("#help");
       if (!prompt) throw new Error("no prompt found for #help");
