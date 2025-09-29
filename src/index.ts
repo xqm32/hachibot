@@ -1,9 +1,11 @@
 import { zValidator } from "@hono/zod-validator";
 import { request } from "@octokit/request";
 import { createOpenRouter } from "@openrouter/ai-sdk-provider";
+import { createClient } from "@supabase/supabase-js";
 import { generateText, ModelMessage } from "ai";
 import { Hono } from "hono";
 import z from "zod";
+import { Database } from "../database.types";
 
 const app = new Hono<{ Bindings: CloudflareBindings }>();
 
@@ -18,6 +20,11 @@ app.post(
     })
   ),
   async (c) => {
+    const supabase = createClient<Database>(
+      c.env.SUPABASE_URL,
+      c.env.SUPABASE_KEY
+    );
+
     const { qq, msg, ref } = c.req.valid("form");
 
     if (msg === "r" || msg === "rooms") {
@@ -100,6 +107,18 @@ app.post(
       if (!key) throw new Error("invalid get command");
       const value = await c.env.HACHIBOT.get(key);
       return c.text(`${value}`);
+    }
+
+    if (msg === "stores") {
+      const { data, error } = await supabase
+        .from("stores")
+        .select("*")
+        .eq("qq", qq);
+      if (error) throw error;
+      if (!data) return c.text("no stores found");
+      return c.text(
+        data.map((store) => `${store.id}: ${store.value}`).join("\n")
+      );
     }
 
     const openrouter = createOpenRouter({ apiKey: c.env.OPENROUTER_API_KEY });
