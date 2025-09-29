@@ -218,7 +218,7 @@ app.post(
       return c.text(text);
     }
 
-    if (realMsg.length === 0) return c.text(`using model ${modelName}`);
+    if (realMsg.length === 0 && !ref) return c.text(`using model ${modelName}`);
 
     const messages: ModelMessage[] = [{ role: "user", content: realMsg }];
     if (ref) messages.unshift({ role: "user", content: ref });
