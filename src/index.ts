@@ -88,7 +88,7 @@ app.post(
     }
 
     if (msg.startsWith("set")) {
-      const match = msg.match(/^set\s+(\S+)\s+(\S+)/s);
+      const match = msg.match(/^set\s+(\S+)\s+(.*)/s);
       if (!match) throw new Error("invalid set command");
       const [, key, value] = match;
       await c.env.HACHIBOT.put(key, value);
