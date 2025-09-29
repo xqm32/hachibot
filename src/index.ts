@@ -87,39 +87,19 @@ app.post(
       return c.text(filteredModels.join("\n"));
     }
 
-    if (msg.startsWith("set #")) {
-      const match = msg.match(/^set (#[^\s]+)\s*(.*)/s);
-      if (!match) throw new Error("invalid set # command");
-      const [, tag, restMsg] = match;
-      const prompt = restMsg.length > 0 ? restMsg : ref;
-      if (!prompt) throw new Error("prompt is empty");
-      await c.env.HACHIBOT.put(tag, prompt);
-      return c.text(`${tag} set to ${prompt}`);
+    if (msg.startsWith("set")) {
+      const match = msg.match(/^set\s+(\S+)\s+(\S+)/s);
+      if (!match) throw new Error("invalid set command");
+      const [, key, value] = match;
+      await c.env.HACHIBOT.put(key, value);
+      return c.text(`${key}: ${value}`);
     }
 
-    if (msg.startsWith("get #")) {
-      const tag = msg.match(/^get (#[^\s]+)/s)?.[1];
-      if (!tag) throw new Error("invalid get # command");
-      const prompt = await c.env.HACHIBOT.get(tag);
-      if (!prompt) throw new Error(`no prompt found for ${tag}`);
-      return c.text(prompt);
-    }
-
-    if (msg.startsWith("set /")) {
-      const match = msg.match(/^set (\/[^\s]+)\s*(.*)/s);
-      if (!match) throw new Error("invalid set / command");
-      const [, shortcut, model] = match;
-      if (!model) throw new Error("model is empty");
-      await c.env.HACHIBOT.put(shortcut, model);
-      return c.text(`${shortcut} set to ${model}`);
-    }
-
-    if (msg.startsWith("get /")) {
-      const shortcut = msg.match(/^get (\/[^\s]+)/s)?.[1];
-      if (!shortcut) throw new Error("invalid get / command");
-      const model = await c.env.HACHIBOT.get(shortcut);
-      if (!model) throw new Error(`no model found for ${shortcut}`);
-      return c.text(model);
+    if (msg.startsWith("get")) {
+      const key = msg.match(/^get\s+(\S+)/)?.[1];
+      if (!key) throw new Error("invalid get command");
+      const value = await c.env.HACHIBOT.get(key);
+      return c.text(`${value}`);
     }
 
     const openrouter = createOpenRouter({ apiKey: c.env.OPENROUTER_API_KEY });
