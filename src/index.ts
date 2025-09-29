@@ -96,10 +96,26 @@ app.post(
     }
 
     if (msg.startsWith("get")) {
-      const key = msg.match(/^get\s+(\S+)/)?.[1];
+      const key = msg.match(/^get\s+(\S+)/s)?.[1];
       if (!key) throw new Error("invalid get command");
       const value = await c.env.HACHIBOT.get(key);
       return c.text(`${value}`);
+    }
+
+    if (msg.startsWith("listmy")) {
+      const type = msg.match(/^listmy\s+(\S+)/s)?.[1];
+      if (!type) throw new Error("invalid listmy command");
+      const { results } = await c.env.hachibot
+        .prepare("SELECT * FROM stores WHERE qq = ? AND type = ?")
+        .bind(qq, type)
+        .run();
+      if (results.length === 0) return c.text("no records found");
+      const lines = results.map((row) => {
+        const id = row.rowid as number;
+        const value = row.value as string;
+        return `${id}: ${value}`;
+      });
+      return c.text(lines.join("\n"));
     }
 
     const openrouter = createOpenRouter({ apiKey: c.env.OPENROUTER_API_KEY });
