@@ -102,6 +102,17 @@ app.post(
       return c.text(`${value}`);
     }
 
+    if (msg.startsWith("addmy")) {
+      const match = msg.match(/^addmy\s+(\S+)\s+(.*)/s);
+      if (!match) throw new Error("invalid addmy command");
+      const [, type, value] = match;
+      await c.env.hachibot
+        .prepare("INSERT INTO stores (qq, type, value) VALUES (?, ?, ?)")
+        .bind(qq, type, value)
+        .run();
+      return c.text("added");
+    }
+
     if (msg.startsWith("listmy")) {
       const type = msg.match(/^listmy\s+(\S+)/s)?.[1];
       if (!type) throw new Error("invalid listmy command");
