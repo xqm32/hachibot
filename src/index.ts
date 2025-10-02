@@ -17,6 +17,7 @@ app.post(
       qq: z.string(),
       msg: z.string(),
       ref: z.string().optional(),
+      image: z.string().optional(),
     })
   ),
   async (c) => {
@@ -25,7 +26,7 @@ app.post(
       c.env.SUPABASE_KEY
     );
 
-    const { qq, msg, ref } = c.req.valid("form");
+    const { qq, msg, ref, image } = c.req.valid("form");
 
     if (msg === "r" || msg === "rooms") {
       const urls = [
@@ -141,16 +142,16 @@ app.post(
     const model = openrouter(modelName);
 
     if (realMsg.startsWith("image")) {
-      if (!ref) throw new Error("image prompt is empty");
-      const refUrl = URL.parse(ref);
-      if (!refUrl) throw new Error("invalid image url");
+      if (!image) throw new Error("image prompt is empty");
+      const imageUrl = URL.parse(image);
+      if (!imageUrl) throw new Error("invalid image url");
       const prompt = realMsg.match(/^image\s*(.*)/s)?.[1];
       if (!prompt) throw new Error("image prompt is empty");
       const messages: ModelMessage[] = [
         {
           role: "user",
           content: [
-            { type: "image", image: refUrl },
+            { type: "image", image: imageUrl },
             { type: "text", text: prompt },
           ],
         },
