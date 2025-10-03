@@ -2,7 +2,7 @@ import { zValidator } from "@hono/zod-validator";
 import { request } from "@octokit/request";
 import { createOpenRouter } from "@openrouter/ai-sdk-provider";
 import { createClient } from "@supabase/supabase-js";
-import { generateText, ModelMessage } from "ai";
+import { generateText, ModelMessage, UserModelMessage } from "ai";
 import { Hono } from "hono";
 import z from "zod";
 import { Database } from "../database.types";
@@ -123,6 +123,15 @@ app.post(
     }
 
     const openrouter = createOpenRouter({ apiKey: c.env.OPENROUTER_API_KEY });
+    const message: UserModelMessage["content"] = [];
+    if (image) {
+      const imageUrl = URL.parse(image);
+      if (!imageUrl) throw new Error("invalid image url");
+      message.push({ type: "image", image: imageUrl });
+    }
+    if (ref) message.push({ type: "text", text: ref });
+    if (msg) message.push({ type: "text", text: msg });
+
     const [modelName, realMsg] = await (async () => {
       const match = msg.match(/^\/([^\s]+)\s*(.*)/s);
       if (!match || match[1] === "/") {
@@ -239,10 +248,10 @@ app.post(
 
     if (realMsg.length === 0 && !ref) return c.text(`using model ${modelName}`);
 
-    const messages: ModelMessage[] = [{ role: "user", content: realMsg }];
-    if (ref) messages.unshift({ role: "user", content: ref });
-
-    const { text } = await generateText({ model, messages });
+    const { text } = await generateText({
+      model,
+      messages: [{ role: "user", content: message }],
+    });
     return c.text(text);
   }
 );
