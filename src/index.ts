@@ -128,8 +128,7 @@ app.post(
     const message: UserModelMessage["content"] = [];
     if (image) {
       const imageUrl = URL.parse(image);
-      if (!imageUrl) throw new Error("invalid image url");
-      message.push({ type: "image", image: imageUrl });
+      if (imageUrl) message.push({ type: "image", image: imageUrl });
     }
     if (ref) message.push({ type: "text", text: ref });
     if (msg) message.push({ type: "text", text: msg });
