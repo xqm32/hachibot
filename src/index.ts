@@ -28,6 +28,8 @@ app.post(
 
     const { qq, msg, ref, image } = c.req.valid("form");
 
+    if (msg === "echo") return c.json({ qq, msg, ref, image });
+
     if (msg === "r" || msg === "rooms") {
       const urls = [
         "===== Main =====",
