@@ -170,6 +170,35 @@ app.post(
       return c.text(text);
     }
 
+    if (realMsg === "rai") {
+      const prompt = await c.env.HACHIBOT.get("#rai");
+      if (!prompt) throw new Error("no prompt found for #rai");
+
+      const messages: ModelMessage[] = [
+        { role: "system", content: prompt },
+        {
+          role: "user",
+          content: [
+            {
+              type: "file",
+              filename: "main.json",
+              mediaType: "application/json",
+              data: new URL("https://gi.xqm32.org/api/rooms"),
+            },
+            {
+              type: "file",
+              filename: "beta.json",
+              mediaType: "application/json",
+              data: new URL("https://gi.xqm32.org/beta/api/rooms"),
+            },
+          ],
+        },
+      ];
+
+      const { text } = await generateText({ model, messages });
+      return c.text(text);
+    }
+
     if (realMsg.startsWith("help")) {
       const prompt = await c.env.HACHIBOT.get("#help");
       if (!prompt) throw new Error("no prompt found for #help");
