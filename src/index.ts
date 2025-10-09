@@ -199,7 +199,9 @@ app.post(
       return c.text(text);
     }
 
-    if (realMsg === "hacker news") {
+    if (realMsg.startsWith("hacker news")) {
+      const msg = realMsg.match(/^hacker news\s*(.*)/s)?.[1];
+
       const prompt = await c.env.HACHIBOT.get("#hackernews");
       if (!prompt) throw new Error("no prompt found for #hackernews");
 
@@ -208,6 +210,7 @@ app.post(
 
       const messages: ModelMessage[] = [{ role: "user", content }];
       messages.unshift({ role: "system", content: prompt });
+      if (msg) messages.push({ role: "user", content: msg });
 
       const { text } = await generateText({ model, messages });
       return c.text(text);
