@@ -246,7 +246,14 @@ app.post(
     }
 
     if (realMsg.startsWith("tldr")) {
-      const url = realMsg.match(/^tldr\s+([^\s]+)/)?.[1];
+      let url: string | undefined;
+      if (ref) {
+        const urlMatch = ref.match(/https?:\/\/[^\s]+/);
+        url = urlMatch?.[0];
+      }
+      if (!url) {
+        url = realMsg.match(/^tldr\s+([^\s]+)/)?.[1];
+      }
       if (!url) throw new Error("url not specified");
 
       const prompt = await c.env.HACHIBOT.get("#tldr");
